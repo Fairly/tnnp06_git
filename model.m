@@ -280,22 +280,22 @@ function output = model(t,X,flag_ode)
 
 
 	CaCSQN = Bufsr*CaSR / (CaSR + Kbufsr);
-	dCaSR_ = Iup - Irel - Ileak;
-	bjsr = Bufsr - CaCSQN - dCaSR_ - CaSR + Kbufsr;
-	cjsr = Kbufsr*(CaCSQN + dCaSR_ + CaSR);
+	dCaSR = (Iup - Irel - Ileak);
+	bjsr = Bufsr - CaCSQN - dCaSR - CaSR + Kbufsr;
+	cjsr = Kbufsr*(CaCSQN + dCaSR + CaSR);
 	dCaSR = (sqrt(bjsr*bjsr + 4 * cjsr) - bjsr) / 2-CaSR;
 
 
 	CaSSBuf = Bufss*CaSS / (CaSS + Kbufss);
-	dCaSS_ = -Ixfer*(Vc / Vss) + Irel*(Vsr / Vss) + (-ICaL*inversevssF2*CAPACITANCE);
-	bcss = Bufss - CaSSBuf - dCaSS_ - CaSS + Kbufss;
-	ccss = Kbufss*(CaSSBuf + dCaSS_ + CaSS);
+	dCaSS = (-Ixfer*(Vc / Vss) + Irel*(Vsr / Vss) + (-ICaL*inversevssF2*CAPACITANCE));
+	bcss = Bufss - CaSSBuf - dCaSS - CaSS + Kbufss;
+	ccss = Kbufss*(CaSSBuf + dCaSS + CaSS);
 	dCaSS = (sqrt(bcss*bcss + 4 * ccss) - bcss) / 2-CaSS;
 
 	CaBuf = Bufc*Cai / (Cai + Kbufc);
-	dCai_ = (-(IbCa + IpCa - 2 * INaCa)*inverseVcF2*CAPACITANCE) - (Iup - Ileak)*(Vsr / Vc) + Ixfer;
-	bc = Bufc - CaBuf - dCai_ - Cai + Kbufc;
-	cc = Kbufc*(CaBuf + dCai_ + Cai);
+	dCai = ((-(IbCa + IpCa - 2 * INaCa)*inverseVcF2*CAPACITANCE) - (Iup - Ileak)*(Vsr / Vc) + Ixfer);
+	bc = Bufc - CaBuf - dCai - Cai + Kbufc;
+	cc = Kbufc*(CaBuf + dCai + Cai);
 	dCai = (sqrt(bc*bc + 4 * cc) - bc) / 2-Cai;
 
 	dNai = -(INa + IbNa + 3 * INaK + 3 * INaCa)*inverseVcF*CAPACITANCE;
