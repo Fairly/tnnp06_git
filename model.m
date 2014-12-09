@@ -1,6 +1,4 @@
 function output = model(t,X,flag_ode)
-%UNTITLED 此处显示有关此函数的摘要
-%   此处显示详细说明
 
     %Constants
     R = 8314.472;
@@ -113,7 +111,7 @@ function output = model(t,X,flag_ode)
     KpCa = 0.0005;
     % //Parameters for IpK;
     GpK = 0.0146;
-    
+
     %calculate the stimulus current, Istim
     amp=-80.0;
     duration=0.5;
@@ -134,7 +132,7 @@ function output = model(t,X,flag_ode)
     IKr_xr2_t = IKr_xr2_a*IKr_xr2_b;
     dIKr_xr1=(IKr_xr1_inf-IKr_xr1)/IKr_xr1_t;
     dIKr_xr2=(IKr_xr2_inf-IKr_xr2)/IKr_xr2_t;
-    
+
     Ek = RTONF*(log((Ko / Ki)));
     sxr1 = IKr_xr1;
     sxr2 = IKr_xr2;
@@ -142,20 +140,20 @@ function output = model(t,X,flag_ode)
 
     %IKs
     IKs_xs_inf = 1. / (1. + exp((-5. - Volt) / 14.));
-	IKs_xs_a = (1400. / (sqrt(1. + exp((5. - Volt) / 6))));
-	IKs_xs_b = (1. / (1. + exp((Volt - 35.) / 15.)));
-	IKs_xs_t = IKs_xs_a*IKs_xs_b + 80;
+    IKs_xs_a = (1400. / (sqrt(1. + exp((5. - Volt) / 6))));
+    IKs_xs_b = (1. / (1. + exp((Volt - 35.) / 15.)));
+    IKs_xs_t = IKs_xs_a*IKs_xs_b + 80;
     dIKs_xs = (IKs_xs_inf-IKs_xs)/IKs_xs_t;
-    
+
     Eks = RTONF*(log((Ko + pKNa*Nao) / (Ki + pKNa*Nai)));
     IKs = Gks*IKs_xs*IKs_xs*(Volt - Eks);
-    
+
     %IK1
     IK1_a = 0.1 / (1. + exp(0.06*(Volt - Ek - 200)));
-	IK1_b = (3.*exp(0.0002*(Volt - Ek + 100))+exp(0.1*(Volt - Ek - 10))) / (1. + exp(-0.5*(Volt - Ek)));
+    IK1_b = (3.*exp(0.0002*(Volt - Ek + 100))+exp(0.1*(Volt - Ek - 10))) / (1. + exp(-0.5*(Volt - Ek)));
     rec_iK1 = IK1_a / (IK1_a + IK1_b);
     IK1 = GK1*rec_iK1*(Volt - Ek);
-    
+
     %Ito
     if strcmp('Epi',celltype)
         Ito_r_inf = 1. / (1. + exp((20 - Volt) / 6.));
@@ -176,33 +174,33 @@ function output = model(t,X,flag_ode)
     dIto_r = (Ito_r_inf-Ito_r)/Ito_r_t;
     dIto_s = (Ito_s_inf-Ito_s)/Ito_s_t;
     Ito = Gto*Ito_r*Ito_s*(Volt - Ek);
-    
+
     %INa
     Ena = RTONF*(log((Nao / Nai)));
     INa_m_a = 1. / (1. + exp((-60. - Volt) / 5.));
-	INa_m_b = 0.1 / (1. + exp((Volt + 35.) / 5.)) + 0.10 / (1. + exp((Volt - 50.) / 200.));
-	INa_m_t = INa_m_a*INa_m_b;
-	INa_m_inf = 1. / ((1. + exp((-56.86 - Volt) / 9.03))*(1. + exp((-56.86 - Volt) / 9.03)));
+    INa_m_b = 0.1 / (1. + exp((Volt + 35.) / 5.)) + 0.10 / (1. + exp((Volt - 50.) / 200.));
+    INa_m_t = INa_m_a*INa_m_b;
+    INa_m_inf = 1. / ((1. + exp((-56.86 - Volt) / 9.03))*(1. + exp((-56.86 - Volt) / 9.03)));
     if Volt >= -40.
-		INa_h_a = 0.;
-		INa_h_b = (0.77 / (0.13*(1. + exp(-(Volt + 10.66) / 11.1))));
-		INa_h_t = 1.0 / (INa_h_a + INa_h_b);
+        INa_h_a = 0.;
+        INa_h_b = (0.77 / (0.13*(1. + exp(-(Volt + 10.66) / 11.1))));
+        INa_h_t = 1.0 / (INa_h_a + INa_h_b);
     else
-		INa_h_a = (0.057*exp(-(Volt + 80.) / 6.8));
-		INa_h_b = (2.7*exp(0.079*Volt) + (3.1e5)*exp(0.3485*Volt));
-		INa_h_t = 1.0 / (INa_h_a + INa_h_b);
+        INa_h_a = (0.057*exp(-(Volt + 80.) / 6.8));
+        INa_h_b = (2.7*exp(0.079*Volt) + (3.1e5)*exp(0.3485*Volt));
+        INa_h_t = 1.0 / (INa_h_a + INa_h_b);
     end
-	INa_h_inf = 1. / ((1. + exp((Volt + 71.55) / 7.43))*(1. + exp((Volt + 71.55) / 7.43)));
+    INa_h_inf = 1. / ((1. + exp((Volt + 71.55) / 7.43))*(1. + exp((Volt + 71.55) / 7.43)));
     if Volt >= -40.
-		INa_j_a = 0.;
-		INa_j_b = (0.6*exp((0.057)*Volt) / (1. + exp(-0.1*(Volt + 32.))));
-		INa_j_t = 1.0 / (INa_j_a + INa_j_b);
+        INa_j_a = 0.;
+        INa_j_b = (0.6*exp((0.057)*Volt) / (1. + exp(-0.1*(Volt + 32.))));
+        INa_j_t = 1.0 / (INa_j_a + INa_j_b);
     else
-		INa_j_a = (((-2.5428e4)*exp(0.2444*Volt)-(6.948e-6)*exp(-0.04391*Volt))*(Volt + 37.78)/(1. + exp(0.311*(Volt + 79.23))));
-		INa_j_b = (0.02424*exp(-0.01052*Volt) / (1. + exp(-0.1378*(Volt + 40.14))));
-		INa_j_t = 1.0 / (INa_j_a + INa_j_b);
+        INa_j_a = (((-2.5428e4)*exp(0.2444*Volt)-(6.948e-6)*exp(-0.04391*Volt))*(Volt + 37.78)/(1. + exp(0.311*(Volt + 79.23))));
+        INa_j_b = (0.02424*exp(-0.01052*Volt) / (1. + exp(-0.1378*(Volt + 40.14))));
+        INa_j_t = 1.0 / (INa_j_a + INa_j_b);
     end
-	INa_j_inf = INa_h_inf;
+    INa_j_inf = INa_h_inf;
     dINa_m = (INa_m_inf-INa_m)/INa_m_t;
     dINa_h = (INa_h_inf-INa_h)/INa_h_t;
     dINa_j = (INa_j_inf-INa_j)/INa_j_t;
@@ -218,25 +216,25 @@ function output = model(t,X,flag_ode)
         
     %ICaL
     ICaL_d_inf = 1. / (1. + exp((-8 - Volt) / 7.5));
-	ICaL_d_a = 1.4 / (1. + exp((-35 - Volt) / 13)) + 0.25;
-	ICaL_d_b = 1.4 / (1. + exp((Volt + 5) / 5));
-	ICaL_d_c = 1. / (1. + exp((50 - Volt) / 20));
-	ICaL_d_t = ICaL_d_a*ICaL_d_b + ICaL_d_c;
-    
-	ICaL_f_inf = 1. / (1. + exp((Volt + 20) / 7));
-	ICaL_f_a = 1102.5*exp(-(Volt + 27)*(Volt + 27) / 225);
-	ICaL_f_b = 200. / (1 + exp((13 - Volt) / 10.));
-	ICaL_f_c = (180. / (1 + exp((Volt + 30) / 10))) + 20;
-	ICaL_f_t = ICaL_f_a + ICaL_f_b + ICaL_f_c;
-    
-	ICaL_f2_inf = 0.67 / (1. + exp((Volt + 35) / 7)) + 0.33;
-	ICaL_f2_a = 600 * exp(-(Volt + 25)*(Volt + 25) / 170);
-	ICaL_f2_b = 31 / (1. + exp((25 - Volt) / 10));
-	ICaL_f2_c = 16 / (1. + exp((Volt + 30) / 10));
-	ICaL_f2_t = ICaL_f2_a + ICaL_f2_b + ICaL_f2_c;
-    
-	ICaL_fCaSS_inf = 0.6 / (1 + (CaSS / 0.05)*(CaSS / 0.05)) + 0.4;
-	ICaL_fCaSS_t = 80. / (1 + (CaSS / 0.05)*(CaSS / 0.05)) + 2.;
+    ICaL_d_a = 1.4 / (1. + exp((-35 - Volt) / 13)) + 0.25;
+    ICaL_d_b = 1.4 / (1. + exp((Volt + 5) / 5));
+    ICaL_d_c = 1. / (1. + exp((50 - Volt) / 20));
+    ICaL_d_t = ICaL_d_a*ICaL_d_b + ICaL_d_c;
+
+    ICaL_f_inf = 1. / (1. + exp((Volt + 20) / 7));
+    ICaL_f_a = 1102.5*exp(-(Volt + 27)*(Volt + 27) / 225);
+    ICaL_f_b = 200. / (1 + exp((13 - Volt) / 10.));
+    ICaL_f_c = (180. / (1 + exp((Volt + 30) / 10))) + 20;
+    ICaL_f_t = ICaL_f_a + ICaL_f_b + ICaL_f_c;
+
+    ICaL_f2_inf = 0.67 / (1. + exp((Volt + 35) / 7)) + 0.33;
+    ICaL_f2_a = 600 * exp(-(Volt + 25)*(Volt + 25) / 170);
+    ICaL_f2_b = 31 / (1. + exp((25 - Volt) / 10));
+    ICaL_f2_c = 16 / (1. + exp((Volt + 30) / 10));
+    ICaL_f2_t = ICaL_f2_a + ICaL_f2_b + ICaL_f2_c;
+
+    ICaL_fCaSS_inf = 0.6 / (1 + (CaSS / 0.05)*(CaSS / 0.05)) + 0.4;
+    ICaL_fCaSS_t = 80. / (1 + (CaSS / 0.05)*(CaSS / 0.05)) + 2.;
     
     dCaL_d = (ICaL_d_inf-ICaL_d)/ICaL_d_t;
     dCaL_f = (ICaL_f_inf-ICaL_f)/ICaL_f_t;
@@ -263,44 +261,44 @@ function output = model(t,X,flag_ode)
     
     %Ca transient and intracellular concentrations
     inverseVcF2 = 1 / (2 * Vc*F);
-	inverseVcF = 1. / (Vc*F);
-	inversevssF2 = 1 / (2 * Vss*F);
+    inverseVcF = 1. / (Vc*F);
+    inversevssF2 = 1 / (2 * Vss*F);
     
     kCaSR = maxsr - ((maxsr - minsr) / (1 + (EC / CaSR)*(EC / CaSR)));
-	k1 = k1_ / kCaSR;
-	k2 = k2_ * kCaSR;
-	dRR = k4 * (1 - RR) - k2*CaSS*RR;
-	OO = k1*CaSS*CaSS*RR / (k3 + k1*CaSS*CaSS);
+    k1 = k1_ / kCaSR;
+    k2 = k2_ * kCaSR;
+    dRR = k4 * (1 - RR) - k2*CaSS*RR;
+    OO = k1*CaSS*CaSS*RR / (k3 + k1*CaSS*CaSS);
 
 
-	Irel = Vrel*OO*(CaSR - CaSS);
-	Ileak = Vleak*(CaSR - Cai);
-	Iup = Vmaxup / (1. + ((Kup^2) / (Cai^2)));
-	Ixfer = Vxfer*(CaSS - Cai);
+    Irel = Vrel*OO*(CaSR - CaSS);
+    Ileak = Vleak*(CaSR - Cai);
+    Iup = Vmaxup / (1. + ((Kup^2) / (Cai^2)));
+    Ixfer = Vxfer*(CaSS - Cai);
 
 
-	CaCSQN = Bufsr*CaSR / (CaSR + Kbufsr);
-	dCaSR = (Iup - Irel - Ileak);
-	bjsr = Bufsr - CaCSQN - dCaSR - CaSR + Kbufsr;
-	cjsr = Kbufsr*(CaCSQN + dCaSR + CaSR);
-	dCaSR = (sqrt(bjsr*bjsr + 4 * cjsr) - bjsr) / 2-CaSR;
+    CaCSQN = Bufsr*CaSR / (CaSR + Kbufsr);
+    dCaSR = (Iup - Irel - Ileak);
+    bjsr = Bufsr - CaCSQN - dCaSR - CaSR + Kbufsr;
+    cjsr = Kbufsr*(CaCSQN + dCaSR + CaSR);
+    dCaSR = (sqrt(bjsr*bjsr + 4 * cjsr) - bjsr) / 2-CaSR;
 
 
-	CaSSBuf = Bufss*CaSS / (CaSS + Kbufss);
-	dCaSS = (-Ixfer*(Vc / Vss) + Irel*(Vsr / Vss) + (-ICaL*inversevssF2*CAPACITANCE));
-	bcss = Bufss - CaSSBuf - dCaSS - CaSS + Kbufss;
-	ccss = Kbufss*(CaSSBuf + dCaSS + CaSS);
-	dCaSS = (sqrt(bcss*bcss + 4 * ccss) - bcss) / 2-CaSS;
+    CaSSBuf = Bufss*CaSS / (CaSS + Kbufss);
+    dCaSS = (-Ixfer*(Vc / Vss) + Irel*(Vsr / Vss) + (-ICaL*inversevssF2*CAPACITANCE));
+    bcss = Bufss - CaSSBuf - dCaSS - CaSS + Kbufss;
+    ccss = Kbufss*(CaSSBuf + dCaSS + CaSS);
+    dCaSS = (sqrt(bcss*bcss + 4 * ccss) - bcss) / 2-CaSS;
 
-	CaBuf = Bufc*Cai / (Cai + Kbufc);
-	dCai = ((-(IbCa + IpCa - 2 * INaCa)*inverseVcF2*CAPACITANCE) - (Iup - Ileak)*(Vsr / Vc) + Ixfer);
-	bc = Bufc - CaBuf - dCai - Cai + Kbufc;
-	cc = Kbufc*(CaBuf + dCai + Cai);
-	dCai = (sqrt(bc*bc + 4 * cc) - bc) / 2-Cai;
+    CaBuf = Bufc*Cai / (Cai + Kbufc);
+    dCai = ((-(IbCa + IpCa - 2 * INaCa)*inverseVcF2*CAPACITANCE) - (Iup - Ileak)*(Vsr / Vc) + Ixfer);
+    bc = Bufc - CaBuf - dCai - Cai + Kbufc;
+    cc = Kbufc*(CaBuf + dCai + Cai);
+    dCai = (sqrt(bc*bc + 4 * cc) - bc) / 2-Cai;
 
-	dNai = -(INa + IbNa + 3 * INaK + 3 * INaCa)*inverseVcF*CAPACITANCE;
+    dNai = -(INa + IbNa + 3 * INaK + 3 * INaCa)*inverseVcF*CAPACITANCE;
 
-	dKi = -(Istim + IK1 + Ito + IKr + IKs - 2 * INaK + IpK)*inverseVcF*CAPACITANCE;
+    dKi = -(Istim + IK1 + Ito + IKr + IKs - 2 * INaK + IpK)*inverseVcF*CAPACITANCE;
     
     %return values
     if flag_ode == 1
